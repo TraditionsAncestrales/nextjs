@@ -27,7 +27,7 @@ export default function RecordsCarousel({ className, items }: RecordsCarouselPro
         {items.map(({ features, href, image, slug, text, title }) => (
           <CarouselItem key={slug} className="mb-2 max-w-96">
             <div className="flex h-full w-full flex-col bg-white shadow-md" data-slug={slug}>
-              <Image {...image} width={384} sizes="24rem" objectFit="cover" className="relative aspect-[3/2] flex-none" />
+              <Image {...image} alt={image.alt} sizes="24rem" objectFit="cover" className="relative aspect-[3/2] w-96 flex-none" />
               <div className="flex flex-1 flex-col gap-4 p-4 px-6 sm:px-8">
                 <h4 className={TITLE()}>{title}</h4>
                 <Features features={features} intent="white" />

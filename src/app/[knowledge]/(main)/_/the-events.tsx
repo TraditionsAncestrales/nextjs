@@ -11,7 +11,7 @@ export default function TheEvents({ intent, items }: TheEventsProps) {
 
   useLayoutEffect(() => {
     setEvents(items.filter(({ to }) => to.toISOString() > new Date().toISOString()));
-  }, []);
+  }, [items]);
 
   return (
     <RecordsItems title="Événement" items={events} border="bottom" intent={intent}>

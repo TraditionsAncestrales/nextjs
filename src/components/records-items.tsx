@@ -21,7 +21,7 @@ export default function RecordsItems({ children, intent = "white", items = [], t
       intent={intent}
       {...rest}
       Header={<Title text={title} className="mb-8 xl:hidden" />}
-      Aside={<Image {...image} className="relative shadow-lg shadow-black/50" />}
+      Aside={<Image {...image} alt={image.alt} className="relative shadow-lg shadow-black/50" />}
     >
       <Title text={title} className="hidden self-start xl:inline-flex" />
       <Features intent={intent} features={features} />

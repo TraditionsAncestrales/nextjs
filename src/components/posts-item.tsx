@@ -16,7 +16,7 @@ export default function PostsItem({ intent = "white", post, ...rest }: PostsItem
       intent={intent}
       {...rest}
       Header={<Title text={title} className="mb-8 xl:hidden" />}
-      Aside={<Image {...image} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
+      Aside={<Image {...image} alt={image.alt} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
       className={{ ASIDE: "relative", CONTENT: "md:items-stretch" }}
     >
       <Title text={title} className="hidden self-start xl:inline-flex" />
