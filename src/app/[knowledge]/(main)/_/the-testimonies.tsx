@@ -11,7 +11,7 @@ export default function TheTestimonies({ image, items, ...rest }: TheTestimonies
 
   return (
     <Section className="relative" {...rest} Header={<Title text="Témoignages" className="z-10" />}>
-      {image && <Image {...image} className="absolute inset-0 h-full object-cover" />}
+      {image && <Image {...image} alt={image.alt} className="absolute inset-0 h-full object-cover" />}
       <TheTestimoniesCarousel items={items} className="pointer-events-none relative h-[28rem] w-full" />
     </Section>
   );

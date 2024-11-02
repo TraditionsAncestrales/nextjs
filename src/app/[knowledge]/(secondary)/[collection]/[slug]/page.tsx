@@ -23,7 +23,7 @@ export default async function KnowledgeCollectionSlugPage({ params }: KnowledgeC
       Header={<Title text={title} className="mb-8" />}
       Aside={
         <>
-          {image && <Image {...image} width={672} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
+          {image && <Image {...image} alt={image.alt} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
           <Features features={features} />
         </>
       }

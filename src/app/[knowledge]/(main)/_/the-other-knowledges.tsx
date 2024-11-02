@@ -27,6 +27,7 @@ export default function TheOtherKnowledges({ knowledges }: TheOtherKnowledgesPro
             Aside={
               <Image
                 {...image}
+                alt={image.alt}
                 sizes="(min-width: 768px) 20rem, (min-width: 640px) 36rem, 100vw"
                 className="relative aspect-[3/2] object-cover shadow-lg shadow-black/50"
               />
@@ -43,7 +44,7 @@ export default function TheOtherKnowledges({ knowledges }: TheOtherKnowledgesPro
             className="group/k relative hidden h-[600px] w-1/4 flex-col items-center justify-center overflow-hidden lg:flex"
             data-theme={slug}
           >
-            <Image {...image} height={600} width={512} sizes="25vw" className={cn(cAbs, "-z-20 object-cover group-hover/k:scale-105")} />
+            <Image {...image} alt={image.alt} sizes="25vw" className={cn(cAbs, "-z-20 object-cover group-hover/k:scale-105")} />
             <div className={cn(cAbs, "-z-10 translate-y-full bg-primary group-hover/k:translate-y-0")}>
               <div className="mt-[150px] px-4 text-center">
                 <article dangerouslySetInnerHTML={{ __html: text }} />

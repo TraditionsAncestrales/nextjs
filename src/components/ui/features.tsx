@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import type { Intent } from "@/styles/ui";
 import type { ClassValue } from "tailwind-variants";
 
+// MAIN ************************************************************************************************************************************
 export default function Features({ className, features = [], intent = "white" }: FeaturesProps) {
   if (features.length === 0) return;
 

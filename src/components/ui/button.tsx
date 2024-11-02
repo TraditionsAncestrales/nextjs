@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
+import { bg, disabledBg, focusRing, hoverBg, type Intent, text } from "@/styles/ui";
+import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import { tv, type VariantProps } from "tailwind-variants";
-import { bg, disabledBg, focusRing, hoverBg, Intent, text } from "@/styles/ui";
 
 export const btnIntent = (intent: Intent) => [bg(intent), hoverBg(intent), disabledBg(intent), focusRing(intent)].join(" ");
 
