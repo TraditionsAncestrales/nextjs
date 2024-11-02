@@ -32,9 +32,13 @@ export default function TheNewsletterForm({ className }: TheNewsletterFormProps)
   const { control, formState, handleSubmit, reset } = form;
 
   useEffect(() => {
-    const { description, status } = message ?? {};
-    if (status === 200) reset();
-    if (status) status === 200 ? toast.success("Succès", { description }) : toast.error("Erreur", { description });
+    if (message) {
+      const { description, status } = message ?? {};
+      if (status === 200) {
+        reset();
+        toast.success("Succès", { description });
+      } else toast.error("Erreur", { description });
+    }
   }, [message, reset]);
 
   return (

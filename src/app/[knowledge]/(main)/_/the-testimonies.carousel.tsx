@@ -1,7 +1,7 @@
 "use client";
 
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { TestimoniesRecord } from "@/lib/pocketbase/schemas";
+import type { TestimoniesRecord } from "@/lib/pocketbase/schemas";
 import Autoplay from "embla-carousel-autoplay";
 
 // MAIN ************************************************************************************************************************************

@@ -4,7 +4,6 @@ import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import type { ClassValue } from "tailwind-variants";
 
 // MAIN ************************************************************************************************************************************
 export default function TheContactMap({ className }: TheContactMapProps) {
@@ -22,5 +21,5 @@ export default function TheContactMap({ className }: TheContactMapProps) {
 
 // TYPES *********************************************************************************************************************************
 export type TheContactMapProps = {
-  className: ClassValue;
+  className: string;
 };

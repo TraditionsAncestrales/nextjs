@@ -35,10 +35,10 @@ export const subscribeToNewsletterAction = formAction({
       const { status } = await mailchimp.lists.getListMember(listId, subscriberHash);
       if (status !== "unsubscribed") return { data, status: 409 };
       await mailchimp.lists.updateListMember(listId, subscriberHash, { status: "subscribed" });
-    } catch (error) {
+    } catch {
       try {
         await mailchimp.lists.addListMember(listId, { email_address: email, status: "subscribed" });
-      } catch (error) {
+      } catch {
         return { data, status: 400 };
       }
     }

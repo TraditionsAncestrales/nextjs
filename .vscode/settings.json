@@ -2,6 +2,7 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
+  "eslint.useFlatConfig": false,
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#303060",
     "activityBar.background": "#303060",

@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useWindowScroll } from "@uidotdev/usehooks";
-import { ClassValue } from "tailwind-variants";
+import type { ClassValue } from "tailwind-variants";
 
 // MAIN ************************************************************************************************************************************
 export default function TheBody({ children, className, theme }: LayoutProps) {

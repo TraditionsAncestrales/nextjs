@@ -7,7 +7,7 @@ export default async function ShopPage() {
 
   return (
     <RecordsItems title="Produit" items={products} border="all" intent="light">
-      <p>Il n'y a actuellement aucun produit dans la boutique.</p>
+      <p>Il n&apos;y a actuellement aucun produit dans la boutique.</p>
     </RecordsItems>
   );
 }
