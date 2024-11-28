@@ -10,8 +10,8 @@ import { useActionState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { tv, type ClassValue } from "tailwind-variants";
-import IconSubmit from "~icons/bi/envelope-plus";
-import IconSubmitting from "~icons/bi/hourglass-split";
+import IconSubmit from "~icons/bi/envelope-plus.jsx";
+import IconSubmitting from "~icons/bi/hourglass-split.jsx";
 import { sendMessageAction } from "./actions";
 
 // STYLES **********************************************************************************************************************************

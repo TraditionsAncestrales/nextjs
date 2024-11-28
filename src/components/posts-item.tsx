@@ -1,33 +1,40 @@
-import type { Item } from "@/lib/pocketbase/utils";
-import Image from "next/image";
+import { getPostRecord } from "@/lib/pocketbase/api";
+import { itemFromPost, type Item } from "@/lib/pocketbase/utils";
+import { Image } from "@unpic/react";
 import Link from "next/link";
 import { BUTTON } from "./ui/button";
-import Section, { type SectionProps } from "./ui/section";
-import Title from "./ui/title";
+import { Section, type SectionProps } from "./ui/section";
+import { Title } from "./ui/title";
 
-export default function PostsItem({ intent = "white", post, ...rest }: PostsItemProps) {
-  // VARS **********************************************************************************************************************************
+// MAIN ************************************************************************************************************************************
+export async function PostsItem({ intent = "white", post, slug, ...rest }: PostsItemProps) {
+  if (slug) post = await getPostRecord(slug).then(itemFromPost);
   if (!post) return;
   const { href, image, text, title } = post;
-  const sizes = `(min-width: 1536px) 42rem, (min-width: 1280px) 36rem, (min-width: 1024px) 28rem, (min-width: 768px) 20rem (min-width: 640px) 36rem, 100vw`;
+
+  const sizes = [
+    "(min-width: 1536px) 42rem",
+    "(min-width: 1280px) 36rem",
+    "(min-width: 1024px) 28rem",
+    "(min-width: 768px) 20rem",
+    "calc(100vw - 7rem - 15px)",
+  ].join(", ");
 
   return (
     <Section
       intent={intent}
       {...rest}
-      Header={<Title text={title} className="mb-8 xl:hidden" />}
-      Aside={<Image {...image} alt={image.alt} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
-      className={{ ASIDE: "relative", CONTENT: "md:items-stretch" }}
+      header={<Title text={title} className="mb-8 xl:hidden" />}
+      aside={<Image {...image} breakpoints={[320, 640, 960, 1280, 1600]} sizes={sizes} className="relative shadow-lg shadow-black/50" />}
     >
       <Title text={title} className="hidden self-start xl:inline-flex" />
       <article dangerouslySetInnerHTML={{ __html: text }} />
       <Link href={href} className={BUTTON({ intent: intent === "primary" ? "secondary" : "primary", className: "self-end" })}>
-        {" "}
-        En savoir plus{" "}
+        En savoir plus
       </Link>
     </Section>
   );
 }
 
 // TYPES ***********************************************************************************************************************************
-export type PostsItemProps = SectionProps & { post?: Item };
+export type PostsItemProps = SectionProps & { post?: Item; slug?: string };

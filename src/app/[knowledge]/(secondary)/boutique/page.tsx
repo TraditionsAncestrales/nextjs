@@ -1,9 +1,11 @@
-import RecordsItems from "@/components/records-items";
-import { getShopPage } from "@/lib/api";
+import { RecordsItems } from "@/components/records-items";
+import { getProductRecords } from "@/lib/pocketbase/api";
+import { itemFromProduct } from "@/lib/pocketbase/utils";
 
 // MAIN ************************************************************************************************************************************
 export default async function ShopPage() {
-  const { products } = await getShopPage();
+  const productRecords = await getProductRecords();
+  const products = await Promise.all(productRecords.map(itemFromProduct));
 
   return (
     <RecordsItems title="Produit" items={products} border="all" intent="light">

@@ -1,8 +1,20 @@
 import { env } from "@/env";
-import PocketBase from "pocketbase";
+import type { TypedPocketbase } from "@/lib/pocketbase/schemas";
+import Pocketbase from "pocketbase";
 import { helpersFrom } from "zod-pocketbase";
 
-export const pocketbase = new PocketBase(env.ZOD_POCKETBASE_URL);
+// let pocketbase: TypedPocketbase;
+
+export const pocketbase: TypedPocketbase = new Pocketbase(env.ZOD_POCKETBASE_URL);
 pocketbase.autoCancellation(false);
+pocketbase.beforeSend = (url, options) => ({ url, options: { ...options, cache: "force-cache" } });
 
 export const { getRecord, getRecords } = helpersFrom({ pocketbase });
+
+export function getPocketbase() {
+  // if (!pocketbase) {
+  //   pocketbase = new Pocketbase(env.ZOD_POCKETBASE_URL);
+  //   pocketbase.autoCancellation(false);
+  // }
+  return pocketbase;
+}

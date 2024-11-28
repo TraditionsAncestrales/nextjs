@@ -26,9 +26,6 @@ const nextConfig = {
     );
     return config;
   },
-  experimental: {
-    dynamicIO: true,
-  },
 };
 
 export default nextConfig;

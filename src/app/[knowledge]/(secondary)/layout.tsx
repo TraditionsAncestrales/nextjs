@@ -1,21 +1,19 @@
-import PostsItem from "@/components/posts-item";
-import TheHero from "@/components/the-hero";
-import { getLayout } from "@/lib/api";
+import { PostsItem } from "@/components/posts-item";
 import { TheNewsletter } from "../(main)/_/the-newsletter";
-import TheOtherKnowledges from "../(main)/_/the-other-knowledges";
+import { TheOtherKnowledges } from "../(main)/_/the-other-knowledges";
+import { TheHero } from "../_/the-hero";
 
 // MAIN ************************************************************************************************************************************
 export default async function SecondaryLayout({ children, params }: SecondaryLayoutProps) {
   const { knowledge } = await params;
-  const { hero, organizationPost, otherKnowledges } = await getLayout(knowledge);
 
   return (
     <>
-      <TheHero {...hero} className="h-[50vh]" />
+      <TheHero knowledge={knowledge} className="h-[50vh]" />
       {children}
-      <TheOtherKnowledges knowledges={otherKnowledges} />
+      <TheOtherKnowledges knowledge={knowledge} />
       <TheNewsletter border="top" intent="primary" />
-      <PostsItem post={organizationPost} className="mb-4" />
+      <PostsItem slug="l-association" className="mb-4" />
     </>
   );
 }

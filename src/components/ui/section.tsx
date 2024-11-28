@@ -5,7 +5,7 @@ import { tv } from "tailwind-variants";
 // STYLES **********************************************************************************************************************************
 export const SECTION = tv({
   slots: {
-    ASIDE: `empty:hidden flex-none w-full flex flex-col gap-8 max-w-xl md:max-w-xs lg:max-w-md xl:max-w-xl 2xl:max-w-2xl`,
+    ASIDE: `empty:hidden flex-none w-full flex flex-col gap-8 md:max-w-xs lg:max-w-md xl:max-w-xl 2xl:max-w-2xl`,
     BORDER: `relative w-full h-16 [mask-image:url(/border.svg)]`,
     CONTENT: `w-full flex flex-col items-center gap-8 md:flex-row md:items-start lg:gap-12`,
     HEADER: ``,
@@ -38,41 +38,37 @@ export const SECTION = tv({
 });
 const { ASIDE, BORDER, CONTENT, HEADER, MAIN, ROOT, WRAPPER } = SECTION();
 
-export default function Section(props: SectionProps) {
-  // PROPS *********************************************************************************************************************************
-  const { Aside, asideRight = false, border = "none", children, className = {}, expanded = false, Header, intent = "white", ...r } = props;
-
-  // VARS **********************************************************************************************************************************
+// MAIN ************************************************************************************************************************************
+export function Section(props: SectionProps) {
+  const { aside, asideRight = false, border = "none", children, className = {}, expanded = false, header, intent = "white", ...r } = props;
   const hasBorderBottom = ["all", "bottom"].includes(border);
   const hasBorderTop = ["all", "top"].includes(border);
-
-  // STYLES ********************************************************************************************************************************
   const C = typeof className === "string" ? { ROOT: className } : className;
 
   return (
     <>
-      {hasBorderTop && <div className={BORDER({ intent, className: ["-mt-16", C.BORDER] })} />}
-      <section {...r} className={ROOT({ border, expanded, intent, className: C.ROOT })}>
-        <div className={WRAPPER({ expanded, className: C.WRAPPER })}>
-          {Header && <div className={HEADER({ expanded, className: C.HEADER })}>{Header}</div>}
-          <div className={CONTENT({ className: C.CONTENT })}>
-            {Aside && <aside className={ASIDE({ asideRight, className: C.ASIDE })}>{Aside}</aside>}
-            <div className={MAIN({ className: C.MAIN })}>{children}</div>
+      {hasBorderTop && <div className={BORDER({ intent, class: ["-mt-16", C.BORDER] })} />}
+      <section className={ROOT({ border, expanded, intent, class: C.ROOT })} {...r}>
+        <div className={WRAPPER({ expanded, class: C.WRAPPER })}>
+          {header && <div className={HEADER({ expanded, class: C.HEADER })}>{header}</div>}
+          <div className={CONTENT({ class: C.CONTENT })}>
+            {aside && <aside className={ASIDE({ asideRight, class: C.ASIDE })}>{aside}</aside>}
+            <div className={MAIN({ class: C.MAIN })}>{children}</div>
           </div>
         </div>
       </section>
-      {hasBorderBottom && <div className={BORDER({ intent, className: ["rotate-180", C.BORDER] })} />}
+      {hasBorderBottom && <div className={BORDER({ intent, class: ["rotate-180", C.BORDER] })} />}
     </>
   );
 }
 
 // TYPES ***********************************************************************************************************************************
 export type SectionProps = PropsWithChildren<{
-  Aside?: ReactNode;
+  aside?: ReactNode;
   asideRight?: boolean;
   border?: "all" | "bottom" | "none" | "top";
   className?: Partial<(typeof SECTION)["slots"]> | string;
   expanded?: boolean;
-  Header?: ReactNode;
+  header?: ReactNode;
   intent?: Intent;
 }>;

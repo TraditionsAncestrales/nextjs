@@ -1,35 +1,38 @@
 import { BUTTON } from "@/components/ui/button";
-import Section from "@/components/ui/section";
-import Title from "@/components/ui/title";
-import type { Item } from "@/lib/pocketbase/utils";
+import { Section } from "@/components/ui/section";
+import { Title } from "@/components/ui/title";
+import { getKnowledgeRecords } from "@/lib/pocketbase/api";
+import { itemFromKnowledge } from "@/lib/pocketbase/utils";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import { Image } from "@unpic/react";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment } from "react/jsx-runtime";
 
 // STYLES **********************************************************************************************************************************
 const cAbs = `absolute inset-0 w-full h-full transition-transform duration-500`;
 // const cItem = `hidden w-1/4 h-[600px] relative overflow-hidden group/k flex-col justify-center items-center lg:flex`;
 
 // MAIN ************************************************************************************************************************************
-export default function TheOtherKnowledges({ knowledges }: TheOtherKnowledgesProps) {
-  if (knowledges.length === 0) return;
+export async function TheOtherKnowledges({ knowledge }: TheOtherKnowledgesProps) {
+  const knowledgeRecords = await getKnowledgeRecords();
+  const knowledges = await Promise.all(knowledgeRecords.map(itemFromKnowledge));
+  const otherKnowledges = knowledges.filter(({ slug }) => slug !== knowledge);
 
   return (
     <div className="-my-16 lg:flex">
-      {knowledges.map(({ href, image, slug, text, title }, i) => (
+      {otherKnowledges.map(({ href, image, slug, text, title }, i) => (
         <Fragment key={i}>
           <Section
             intent="primary"
             className={cn("lg:hidden", { "pt-16": i === 0, "pb-20": i === knowledges.length - 1 })}
             data-theme={slug}
-            Header={<Title text={title} className="mb-8" />}
-            Aside={
+            header={<Title text={title} className="mb-8" />}
+            aside={
               <Image
                 {...image}
-                alt={image.alt}
-                sizes="(min-width: 768px) 20rem, (min-width: 640px) 36rem, 100vw"
-                className="relative aspect-[3/2] object-cover shadow-lg shadow-black/50"
+                breakpoints={[320, 640, 960, 1280, 1600, 1920]}
+                sizes="(min-width: 768px) 20rem, calc(100vw - 7rem - 15px)"
+                className="relative aspect-[3/2] shadow-lg shadow-black/50"
               />
             }
           >
@@ -44,7 +47,7 @@ export default function TheOtherKnowledges({ knowledges }: TheOtherKnowledgesPro
             className="group/k relative hidden h-[600px] w-1/4 flex-col items-center justify-center overflow-hidden lg:flex"
             data-theme={slug}
           >
-            <Image {...image} alt={image.alt} sizes="25vw" className={cn(cAbs, "-z-20 object-cover group-hover/k:scale-105")} />
+            <Image {...image} breakpoints={[320, 640, 960, 1280]} sizes="25vw" className={cn(cAbs, "-z-20 group-hover/k:scale-105")} />
             <div className={cn(cAbs, "-z-10 translate-y-full bg-primary group-hover/k:translate-y-0")}>
               <div className="mt-[150px] px-4 text-center">
                 <article dangerouslySetInnerHTML={{ __html: text }} />
@@ -66,4 +69,4 @@ export default function TheOtherKnowledges({ knowledges }: TheOtherKnowledgesPro
 }
 
 // TYPES ***********************************************************************************************************************************
-export type TheOtherKnowledgesProps = { knowledges: Item[] };
+export type TheOtherKnowledgesProps = { knowledge: string };

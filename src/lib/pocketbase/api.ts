@@ -1,4 +1,4 @@
-import { select } from "zod-pocketbase";
+import { type HelpersFromOpts, helpersFrom, select } from "zod-pocketbase";
 
 import {
   zConfigRecord,
@@ -12,8 +12,6 @@ import {
   zServicesRecord,
   zTestimoniesRecord,
 } from "@/lib/pocketbase/schemas";
-import { unstable_cacheTag as cacheTag } from "next/cache";
-import { getRecord, getRecords } from "./sdk";
 
 // SHARED **********************************************************************************************************************************
 export const toOmit = { collectionId: true, collectionName: true, created: true, updated: true } as const;
@@ -21,47 +19,110 @@ export const zImage = select(zImagesRecord, ["alt", "height", "id", "src", "widt
 export const zKnowledgeSlug = select(zKnowledgesRecord, ["slug"]);
 export const zPlacesNames = select(zPlacesRecord, ["name"]).array();
 
+import { getRecord, getRecords } from "./sdk";
+
 // CONFIG **********************************************************************************************************************************
 export async function getConfigRecord() {
-  "use cache";
-  cacheTag("config");
   const zConfig = zConfigRecord.omit(toOmit);
   return getRecord({ collection: "config", id: "fedcba987654321" }, { schema: zConfig });
 }
 
-// EVENT ***********************************************************************************************************************************
+// EVENTS **********************************************************************************************************************************
 export async function getEventRecords(knowledge: string) {
-  "use cache";
-  cacheTag("events");
   const zEvent = select(zEventsRecord, ["excerpt", "from", "name", "slug", "to", "url"], {
     image: zImage,
     places: zPlacesNames,
-    service: select(zServicesRecord, ["name"]),
+    service: select(zServicesRecord, ["category", "name", "slug"], { knowledge: zKnowledgeSlug }),
   });
 
   const eventFilter = knowledge !== "traditions-ancestrales" ? `service.knowledge.slug="${knowledge}"` : "";
-  const { items } = await getRecords("events", { schema: zEvent, filter: eventFilter });
+  const { items } = await getRecords("events", { schema: zEvent, filter: eventFilter, sort: "+from" });
   return items;
 }
 
 // KNOWLEDGE *******************************************************************************************************************************
 export async function getKnowledgeRecords() {
-  "use cache";
-  cacheTag("knowledges");
   const zKnowledge = select(zKnowledgesRecord, ["name", "slug", "text"], { image: zImage });
   const { items } = await getRecords("knowledges", { schema: zKnowledge });
   return items;
 }
 
-export async function getKnowledgeEntries() {
-  const { items } = await getRecords("knowledges", { schema: zKnowledgeSlug });
+// PAGE ************************************************************************************************************************************
+export async function getPageRecord(slug: string) {
+  const zPage = select(zPagesRecord, [], {
+    post: select(zPostsRecord, ["excerpt", "slug", "title"], {
+      image: zImage,
+      knowledge: zKnowledgeSlug,
+    }),
+    services: select(zServicesRecord, ["category", "duration", "excerpt", "name", "price", "slug"], {
+      image: zImage,
+      knowledge: zKnowledgeSlug,
+      places: zPlacesNames,
+    })
+      .array()
+      .optional(),
+    testimoniesImage: zImage.optional(),
+  });
+  return getRecord({ collection: "pages", slug }, { schema: zPage });
+}
+
+// POST ************************************************************************************************************************************
+export async function getPostRecord(slug: string) {
+  const zPost = select(zPostsRecord, ["excerpt", "slug", "title"], { image: zImage, knowledge: zKnowledgeSlug });
+  return getRecord({ collection: "posts", slug }, { schema: zPost });
+}
+
+// PRODUCT *********************************************************************************************************************************
+export async function getProductRecords() {
+  const zProduct = select(zProductsRecord, ["excerpt", "name", "price", "slug", "url"], { image: zImage });
+  const { items } = await getRecords("products", { schema: zProduct });
   return items;
 }
 
-// PAGE ************************************************************************************************************************************
-export async function getPageRecord(slug: string) {
-  "use cache";
-  cacheTag(`page_${slug}`);
+// TESTIMONY *******************************************************************************************************************************
+export async function getTestimonyRecords() {
+  const zTestimony = select(zTestimoniesRecord, ["author", "text", "title"]);
+  const { items } = await getRecords("testimonies", { schema: zTestimony });
+  return items;
+}
+
+// LAYOUT **********************************************************************************************************************************
+export async function getLayoutRecords(opts: HelpersFromOpts) {
+  const { getRecord, getRecords } = helpersFrom(opts);
+
+  const zConfig = zConfigRecord.omit(toOmit);
+  const zKnowledge = select(zKnowledgesRecord, ["name", "slug", "text"], { image: zImage });
+  const zPost = select(zPostsRecord, ["excerpt", "slug", "title"], { image: zImage, knowledge: zKnowledgeSlug });
+
+  const [config, { items: knowledges }, organizationPost] = await Promise.all([
+    getRecord({ collection: "config", id: "fedcba987654321" }, { schema: zConfig }),
+    getRecords("knowledges", { schema: zKnowledge }),
+    getRecord({ collection: "posts", slug: "l-association" }, { schema: zPost }),
+  ]);
+
+  return { config, knowledges, organizationPost };
+}
+
+// KNOWLEDGE PAGE **************************************************************************************************************************
+export async function getKnowledgePageEntriesRecords(opts: HelpersFromOpts) {
+  const { getRecords } = helpersFrom(opts);
+
+  const { items: knowledges } = await getRecords("knowledges", { schema: zKnowledgeSlug });
+
+  return { knowledges };
+}
+
+export async function getKnowledgePageRecords(knowledge: string, opts: HelpersFromOpts) {
+  const { getRecord, getRecords } = helpersFrom(opts);
+
+  const zEvent = select(zEventsRecord, ["excerpt", "from", "name", "slug", "to", "url"], {
+    image: zImage,
+    places: zPlacesNames,
+    service: select(zServicesRecord, ["category", "name", "slug"], { knowledge: zKnowledgeSlug }),
+  });
+
+  const eventFilter = knowledge !== "traditions-ancestrales" ? `service.knowledge.slug="${knowledge}"` : "";
+
   const zPage = select(zPagesRecord, [], {
     post: select(zPostsRecord, ["excerpt", "slug", "title"], {
       image: zImage,
@@ -77,96 +138,55 @@ export async function getPageRecord(slug: string) {
     testimoniesImage: zImage.optional(),
   });
 
-  return getRecord({ collection: "pages", slug }, { schema: zPage });
-}
-
-// POST ************************************************************************************************************************************
-export async function getPostRecord(slug: string) {
-  "use cache";
-  cacheTag(`posts_${slug}`);
-  const zPost = select(zPostsRecord, ["collectionName", "excerpt", "slug", "text", "title"], { image: zImage, knowledge: zKnowledgeSlug });
-  return getRecord({ collection: "posts", slug }, { schema: zPost });
-}
-
-export async function getPostEntries() {
-  const zPost = select(zPostsRecord, ["slug"], { knowledge: zKnowledgeSlug });
-  const { items } = await getRecords("posts", { schema: zPost });
-  return items;
-}
-
-// PRODUCT *********************************************************************************************************************************
-export async function getProductRecords() {
-  "use cache";
-  cacheTag(`products`);
-  const zProduct = select(zProductsRecord, ["excerpt", "name", "price", "slug", "url"], { image: zImage });
-  const { items } = await getRecords("products", { schema: zProduct });
-  return items;
-}
-
-// SERVICE *********************************************************************************************************************************
-export async function getServiceRecord(slug: string) {
-  "use cache";
-  cacheTag(`services_${slug}`);
-  const zService = select(zServicesRecord, ["collectionName", "duration", "name", "price", "text"], {
-    image: zImage,
-    places: select(zPlacesRecord, ["name"]).array(),
-  });
-  return getRecord({ collection: "services", slug }, { schema: zService });
-}
-
-export async function getServiceEntries() {
-  const zService = select(zServicesRecord, ["category", "slug"], { knowledge: zKnowledgeSlug });
-  const { items } = await getRecords("services", { schema: zService });
-  return items;
-}
-
-// TESTIMONY *******************************************************************************************************************************
-export async function getTestimonyRecords() {
-  "use cache";
-  cacheTag(`testimonies`);
   const zTestimony = select(zTestimoniesRecord, ["author", "text", "title"]);
-  const { items } = await getRecords("testimonies", { schema: zTestimony });
-  return items;
-}
 
-// LAYOUT **********************************************************************************************************************************
-export async function getLayoutRecords() {
-  const [config, knowledges, organizationPost] = await Promise.all([
-    getConfigRecord(),
-    getKnowledgeRecords(),
-    getPostRecord("l-association"),
+  const [{ items: events }, page, { items: testimonies }] = await Promise.all([
+    getRecords("events", { schema: zEvent, filter: eventFilter, sort: "+from" }),
+    getRecord({ collection: "pages", slug: knowledge }, { schema: zPage }),
+    knowledge === "traditions-ancestrales" ? getRecords("testimonies", { schema: zTestimony }) : { items: [] },
   ]);
-  return { config, knowledges, organizationPost };
-}
 
-// KNOWLEDGE PAGE **************************************************************************************************************************
-export async function getKnowledgePageEntriesRecords() {
-  const knowledges = await getKnowledgeEntries();
-  return { knowledges };
-}
-
-export async function getKnowledgePageRecords(knowledge: string) {
-  const [events, page, testimonies] = await Promise.all([
-    getEventRecords(knowledge),
-    getPageRecord(knowledge),
-    knowledge === "traditions-ancestrales" ? getTestimonyRecords() : [],
-  ]);
   return { events, page, testimonies };
 }
 
 // KNOWLEDGE COLLECTION SLUG PAGE **********************************************************************************************************
-export async function getKnowledgeCollectionSlugPageEntriesRecords() {
-  const [posts, services] = await Promise.all([getPostEntries(), getServiceEntries()]);
+export async function getKnowledgeCollectionSlugPageEntriesRecords(opts: HelpersFromOpts) {
+  const { getRecords } = helpersFrom(opts);
+
+  const zPost = select(zPostsRecord, ["slug"], { knowledge: zKnowledgeSlug });
+  const zService = select(zServicesRecord, ["category", "slug"], { knowledge: zKnowledgeSlug });
+
+  const [{ items: posts }, { items: services }] = await Promise.all([
+    getRecords("posts", { schema: zPost }),
+    getRecords("services", { schema: zService }),
+  ]);
   return { posts, services };
 }
 
-export async function getKnowledgeCollectionSlugPageRecords(collection: string, slug: string) {
-  const single = await (collection === "articles" ? getPostRecord(slug) : getServiceRecord(slug));
+export async function getKnowledgeCollectionSlugPageRecords(collection: string, slug: string, opts: HelpersFromOpts) {
+  const { getRecord } = helpersFrom(opts);
+
+  const zPost = select(zPostsRecord, ["collectionName", "text", "title"], { image: zImage.optional() });
+
+  const zService = select(zServicesRecord, ["collectionName", "duration", "name", "price", "text"], {
+    image: zImage,
+    places: select(zPlacesRecord, ["name"]).array(),
+  });
+
+  const single = await (collection === "articles"
+    ? getRecord({ collection: "posts", slug }, { schema: zPost })
+    : getRecord({ collection: "services", slug }, { schema: zService }));
+
   return { single };
 }
 
 // SHOP PAGE *******************************************************************************************************************************
-export async function getShopPageRecords() {
-  const products = await getProductRecords();
+export async function getShopPageRecords(opts: HelpersFromOpts) {
+  const { getRecords } = helpersFrom(opts);
+
+  const zProduct = select(zProductsRecord, ["excerpt", "name", "price", "slug", "url"], { image: zImage });
+
+  const { items: products } = await getRecords("products", { schema: zProduct });
+
   return { products };
 }
