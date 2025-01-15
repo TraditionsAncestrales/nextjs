@@ -43,6 +43,7 @@ async function strictItemFromKnowledge(knowledge: KnowledgeForItem) {
   return { href: hrefFromKnowledge(knowledge), image: await imageFrom(image), slug, text, title };
 }
 export const itemFromKnowledge = allowUndefined(strictItemFromKnowledge);
+export type KnowledgeItem = Awaited<ReturnType<typeof strictItemFromKnowledge>>;
 
 export function fragmentFromKnowledge({ slug }: KnowledgeForRoute) {
   return slug === "traditions-ancestrales" ? undefined : slug;

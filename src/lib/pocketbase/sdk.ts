@@ -9,7 +9,8 @@ export const pocketbase: TypedPocketbase = new Pocketbase(env.ZOD_POCKETBASE_URL
 pocketbase.autoCancellation(false);
 pocketbase.beforeSend = (url, options) => ({ url, options: { ...options, cache: "force-cache" } });
 
-export const { getRecord, getRecords } = helpersFrom({ pocketbase });
+export const helpers = helpersFrom({ pocketbase });
+export const { getRecord, getRecords } = helpers;
 
 export function getPocketbase() {
   // if (!pocketbase) {

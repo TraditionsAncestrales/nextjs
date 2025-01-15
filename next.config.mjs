@@ -3,9 +3,12 @@ import { promises as fs } from "node:fs";
 import Icons from "unplugin-icons/webpack";
 
 const jiti = createJiti(import.meta.url);
-const loadEnv = (async () => await jiti.import("./src/env.js"))();
+(async () => await jiti.import("./src/env.js"))();
 
 const nextConfig = {
+  experimental: {
+    dynamicIO: true,
+  },
   images: {
     loader: "custom",
     loaderFile: "./imgix-loader.js",

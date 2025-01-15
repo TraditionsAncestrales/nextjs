@@ -1,10 +1,19 @@
+"use cache";
+
 import { Features } from "@/components/ui/features";
 import { Section } from "@/components/ui/section";
 import { Title } from "@/components/ui/title";
-import { getKnowledgeCollectionSlugPage } from "@/lib/api";
-import { getPocketbase } from "@/lib/pocketbase/sdk";
+import { getPostSingle, getServiceSingle } from "@/lib/pocketbase";
+// import { getPostEntries, getServiceEntries } from "@/lib/pocketbase/api";
+import { helpers } from "@/lib/pocketbase/sdk";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+
+// STATIC **********************************************************************************************************************************
+// export async function generateStaticParams() {
+//   const [posts, services] = await Promise.all([getPostEntries(), getServiceEntries()]);
+//   return [...posts, ...services];
+// }
 
 // CONST ***********************************************************************************************************************************
 const sizes = `(min-width: 1536px) 42rem, (min-width: 1280px) 36rem, (min-width: 1024px) 28rem, (min-width: 768px) 20rem (min-width: 640px) 36rem, 100vw`;
@@ -12,7 +21,7 @@ const sizes = `(min-width: 1536px) 42rem, (min-width: 1280px) 36rem, (min-width:
 // MAIN ************************************************************************************************************************************
 export default async function KnowledgeCollectionSlugPage({ params }: KnowledgeCollectionSlugPageProps) {
   const { collection, slug } = await params;
-  const { single } = await getKnowledgeCollectionSlugPage(collection, slug, { pocketbase: getPocketbase() });
+  const single = await (collection === "articles" ? getPostSingle(slug, helpers) : getServiceSingle(slug, helpers));
   if (!single) notFound();
   const { features, image, text, title } = single;
 

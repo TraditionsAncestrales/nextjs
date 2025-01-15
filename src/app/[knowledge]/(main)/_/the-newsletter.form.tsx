@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { defaultNewsletterValues, getNewsletterMessage, zNewsletterValues, type NewsletterValues } from "@/lib/form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { defaultNewsletterValues, getNewsletterMessage, type NewsletterValues } from "@/lib/form";
 import { useActionState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -25,7 +24,7 @@ export default function TheNewsletterForm({ className }: TheNewsletterFormProps)
 
   const form = useForm<NewsletterValues>({
     mode: "onTouched",
-    resolver: zodResolver(zNewsletterValues),
+    // resolver: zodResolver(zNewsletterValues),
     defaultValues: state?.data ?? defaultNewsletterValues,
     errors: state?.errors,
   });

@@ -1,3 +1,5 @@
+"use cache";
+
 import { PostsItem } from "@/components/posts-item";
 import { Toaster } from "@/components/ui/sonner";
 import { TheHero } from "../_/the-hero";
@@ -11,7 +13,7 @@ export default async function MainLayout({ children, params }: MainLayoutProps) 
 
   return (
     <>
-      <TheHero knowledge={knowledge} className="h-screen" />
+      <TheHero params={params} className="h-screen" />
       {children}
       {knowledge === "traditions-ancestrales" && <PostsItem slug="l-association" border="bottom" intent="primary" />}
       <TheOtherKnowledges knowledge={knowledge} />

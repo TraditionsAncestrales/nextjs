@@ -1,5 +1,6 @@
 export default function imgixLoader({ src, width, quality }) {
-  const url = new URL(`https://niama-traditions-ancestrales.imgix.net/${src}`);
+  // const url = new URL(`https://niama-traditions-ancestrales.imgix.net/${src}`);
+  const url = new URL(src);
   const params = url.searchParams;
   params.set("auto", params.getAll("auto").join(",") || "format");
   params.set("fit", params.get("fit") || "max");

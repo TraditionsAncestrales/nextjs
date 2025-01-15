@@ -1,26 +1,27 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useWindowScroll } from "@uidotdev/usehooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { tv, type ClassValue } from "tailwind-variants";
-import ListIcon from "~icons/ph/list.jsx";
+// import ListIcon from "~icons/ph/list.jsx";
 import LogoIcon from "~icons/ta/logo.jsx";
 
 // STYLES **********************************************************************************************************************************
-const NAV_BURGER = tv({
-  slots: {
-    ROOT: `p-2 text-sm text-neutral-800 rounded hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-200`,
-    LINK: `hover:bg-primary block p-4 px-8 font-bold uppercase text-black hover:text-white`,
-  },
-  variants: {
-    isActive: {
-      true: { LINK: `bg-primary text-white` },
-    },
-  },
-});
+// const NAV_BURGER = tv({
+//   slots: {
+//     ROOT: `p-2 text-sm text-neutral-800 rounded hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-200`,
+//     LINK: `hover:bg-primary block p-4 px-8 font-bold uppercase text-black hover:text-white`,
+//   },
+//   variants: {
+//     isActive: {
+//       true: { LINK: `bg-primary text-white` },
+//     },
+//   },
+// });
 
 const NAV_LINK = tv({
   base: `text-xs font-bold p-2 uppercase rounded group-data-top:text-white hover:bg-primary hover:text-white`,
@@ -57,12 +58,13 @@ export function TheHeader({ className }: TheHeaderProps) {
             <h4 className="text-xs leading-none text-neutral-500">Ancestrales</h4>
           </hgroup>
         </Link>
-        <NavBurger navs={navs} className="sm:hidden" />
+        {/* <NavBurger navs={navs} className="sm:hidden" /> */}
         <ul className="hidden items-center sm:flex">
           {leftNavs.map((nav, i) => (
             <NavItem key={i} {...nav} />
           ))}
-          <li aria-current={pathname === "/" ? "page" : undefined}>
+          <li>
+            {/* aria-current={pathname === "/" ? "page" : undefined}> */}
             <Link href="/">
               <LogoIcon
                 aria-label="Retour à l'accueil"
@@ -80,26 +82,26 @@ export function TheHeader({ className }: TheHeaderProps) {
 }
 
 // NAV BURGER ******************************************************************************************************************************
-const { LINK, ROOT } = NAV_BURGER();
-function NavBurger({ className, navs }: NavBurgerProps) {
-  return (
-    <Sheet>
-      <SheetTrigger className={ROOT({ className })}>
-        <ListIcon />
-      </SheetTrigger>
-      <SheetContent>
-        {navs.map(({ href, isActive, text }, i) => (
-          <Link key={i} href={href} className={LINK({ isActive })}>
-            {text}
-          </Link>
-        ))}
-      </SheetContent>
-    </Sheet>
-  );
-}
+// const { LINK, ROOT } = NAV_BURGER();
+// function NavBurger({ className, navs }: NavBurgerProps) {
+//   return (
+//     <Sheet>
+//       <SheetTrigger className={ROOT({ className })}>
+//         <ListIcon />
+//       </SheetTrigger>
+//       <SheetContent>
+//         {navs.map(({ href, isActive, text }, i) => (
+//           <Link key={i} href={href} className={LINK({ isActive })}>
+//             {text}
+//           </Link>
+//         ))}
+//       </SheetContent>
+//     </Sheet>
+//   );
+// }
 
 // NAV ITEM ********************************************************************************************************************************
-function NavItem({ href, isActive, text }: NavItemProps) {
+function NavItem({ href, isActive = false, text }: NavItemProps) {
   return (
     <li className="mx-1" aria-current={isActive ? "page" : undefined}>
       <Link href={href} className={NAV_LINK({ isActive })}>
@@ -111,6 +113,6 @@ function NavItem({ href, isActive, text }: NavItemProps) {
 
 // TYPES ***********************************************************************************************************************************
 export type TheHeaderProps = { className?: ClassValue };
-type NavBurgerProps = { className: string; navs: Nav[] };
-type NavItemProps = { href: string; isActive: boolean; text: string };
-type Nav = { isActive: boolean; href: string; text: string };
+// type NavBurgerProps = { className: string; navs: Nav[] };
+type NavItemProps = { href: string; isActive?: boolean; text: string };
+// type Nav = { isActive: boolean; href: string; text: string };

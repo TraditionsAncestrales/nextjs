@@ -29,7 +29,6 @@ export const metadata: Metadata = {
 // MAIN ************************************************************************************************************************************
 export default async function Layout({ children, params }: LayoutProps) {
   const { knowledge } = await params;
-
   return (
     <html lang="fr">
       <body

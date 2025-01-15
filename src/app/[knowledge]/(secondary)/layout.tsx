@@ -1,3 +1,5 @@
+"use cache";
+
 import { PostsItem } from "@/components/posts-item";
 import { TheNewsletter } from "../(main)/_/the-newsletter";
 import { TheOtherKnowledges } from "../(main)/_/the-other-knowledges";
@@ -9,7 +11,7 @@ export default async function SecondaryLayout({ children, params }: SecondaryLay
 
   return (
     <>
-      <TheHero knowledge={knowledge} className="h-[50vh]" />
+      <TheHero params={params} className="h-[50vh]" />
       {children}
       <TheOtherKnowledges knowledge={knowledge} />
       <TheNewsletter border="top" intent="primary" />

@@ -1,5 +1,6 @@
 import { Section } from "@/components/ui/section";
-import { getConfigRecord } from "@/lib/pocketbase/api";
+import { getConfig } from "@/lib/pocketbase";
+import { helpers } from "@/lib/pocketbase/sdk";
 import Link from "next/link";
 import PhoneIcon from "~icons/bi/phone.jsx";
 import AddressIcon from "~icons/bi/pin-map.jsx";
@@ -13,7 +14,7 @@ const SOCIAL = "text-primary hover:text-primary-400";
 
 // MAIN ************************************************************************************************************************************
 export async function TheFooter() {
-  const { city, email, facebook, instagram, phone, street, zipcode } = await getConfigRecord();
+  const { city, email, facebook, instagram, phone, street, zipcode } = await getConfig(helpers);
 
   return (
     <Section border="top" intent="dark" className="items-center text-white">

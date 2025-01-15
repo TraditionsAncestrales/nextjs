@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { defaultContactValues, getContactMessage, zContactValues, type ContactValues } from "@/lib/form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { defaultContactValues, getContactMessage, type ContactValues } from "@/lib/form";
 import { useActionState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -25,7 +24,7 @@ export default function TheContactForm({ className }: TheContactFormProps) {
 
   const form = useForm<ContactValues>({
     mode: "onTouched",
-    resolver: zodResolver(zContactValues),
+    // resolver: zodResolver(zContactValues),
     defaultValues: state?.data ?? defaultContactValues,
     errors: state?.errors,
   });

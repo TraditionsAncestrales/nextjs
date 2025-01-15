@@ -1,5 +1,6 @@
-import { getPostRecord } from "@/lib/pocketbase/api";
-import { itemFromPost, type Item } from "@/lib/pocketbase/utils";
+import { getPostItem } from "@/lib/pocketbase";
+import { helpers } from "@/lib/pocketbase/sdk";
+import { type Item } from "@/lib/pocketbase/utils";
 import { Image } from "@unpic/react";
 import Link from "next/link";
 import { BUTTON } from "./ui/button";
@@ -8,7 +9,7 @@ import { Title } from "./ui/title";
 
 // MAIN ************************************************************************************************************************************
 export async function PostsItem({ intent = "white", post, slug, ...rest }: PostsItemProps) {
-  if (slug) post = await getPostRecord(slug).then(itemFromPost);
+  if (slug) post = await getPostItem(slug, helpers);
   if (!post) return;
   const { href, image, text, title } = post;
 

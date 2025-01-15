@@ -3,7 +3,7 @@ import { Title } from "@/components/ui/title";
 import TheNewsletterForm from "./the-newsletter.form";
 
 // MAIN ************************************************************************************************************************************
-export async function TheNewsletter(props: TheNewsletterProps) {
+export function TheNewsletter(props: TheNewsletterProps) {
   return (
     <Section {...props} header={<Title text="Newsletter" className="mb-8" />}>
       <div className="flex w-full flex-col gap-4 lg:flex-row lg:gap-12">

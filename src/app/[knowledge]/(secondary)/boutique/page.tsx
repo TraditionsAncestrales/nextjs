@@ -1,11 +1,15 @@
 import { RecordsItems } from "@/components/records-items";
-import { getProductRecords } from "@/lib/pocketbase/api";
-import { itemFromProduct } from "@/lib/pocketbase/utils";
+import { getProducts } from "@/lib/pocketbase";
+import { helpers } from "@/lib/pocketbase/sdk";
+
+// STATIC **********************************************************************************************************************************
+export async function generateStaticParams() {
+  return [{ knowledge: "traditions-ancestrales" }];
+}
 
 // MAIN ************************************************************************************************************************************
 export default async function ShopPage() {
-  const productRecords = await getProductRecords();
-  const products = await Promise.all(productRecords.map(itemFromProduct));
+  const products = await getProducts(helpers);
 
   return (
     <RecordsItems title="Produit" items={products} border="all" intent="light">
