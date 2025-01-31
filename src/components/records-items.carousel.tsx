@@ -13,7 +13,8 @@ import { Features } from "./ui/features";
 // MAIN ************************************************************************************************************************************
 export function RecordsItemsCarousel({ externalLink = false, items = [], removeStale }: RecordsItemsCarouselProps) {
   const filteredItems = useMemo(
-    () => (removeStale ? items.filter(({ stale }) => stale && stale >= new Date().toISOString()) : items),
+    () => items,
+    // () => (removeStale ? items.filter(({ stale }) => stale && stale >= new Date().toISOString()) : items),
     [items, removeStale],
   );
 
