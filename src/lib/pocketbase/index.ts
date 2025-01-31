@@ -1,3 +1,4 @@
+import { unstable_cacheTag as cacheTag } from "next/cache";
 import { z } from "zod";
 import { helpersFrom, select } from "zod-pocketbase";
 import {
@@ -12,7 +13,11 @@ import {
   zServicesRecord,
   zTestimoniesRecord,
 } from "./schemas";
+import { getRecord, getRecords } from "./sdk";
 import {
+  entryFromKnowledge,
+  entryFromPost,
+  entryFromService,
   hrefFromKnowledge,
   hrefFromPost,
   hrefFromService,
@@ -36,10 +41,18 @@ export const zKnowledgeSlug = select(zKnowledgesRecord, ["slug"]);
 export const zPlacesNames = select(zPlacesRecord, ["name"]).array();
 
 // CONFIG **********************************************************************************************************************************
-export const getConfig = async ({ getRecord }: Helpers) => getRecord({ collection: "config", id: "fedcba987654321" }, { schema: zConfig });
+export const getConfig = async () => {
+  "use cache";
+  cacheTag("config");
+
+  return getRecord({ collection: "config", id: "fedcba987654321" }, { schema: zConfig });
+};
 
 // EVENTS **********************************************************************************************************************************
-export const getEvents = async ({ getRecords }: Helpers) => {
+export const getEvents = async () => {
+  "use cache";
+  cacheTag("events");
+
   const zEvent = select(zEventsRecord, ["excerpt", "from", "name", "slug", "to", "url"], {
     image: zImage,
     places: zPlacesNames,
@@ -50,24 +63,38 @@ export const getEvents = async ({ getRecords }: Helpers) => {
 };
 
 // KNOWLEDGES ******************************************************************************************************************************
-export const getKnowledges = async ({ getRecords }: Helpers) => {
+export const getKnowledges = async () => {
+  "use cache";
+  cacheTag("knowledges");
+
   const zKnowledge = select(zKnowledgesRecord, ["name", "slug", "text"], { image: zImage });
   const { items } = await getRecords("knowledges", { schema: zKnowledge });
   return Promise.all(items.map(itemFromKnowledge));
 };
 
-export const getKnowledgeSlugs = async ({ getRecords }: Helpers) => {
+export const getKnowledgeEntries = async () => {
+  "use cache";
+  cacheTag("knowledges");
+
+  const knowledges = await getKnowledgeSlugs();
+  return knowledges.map((knowledge) => entryFromKnowledge(knowledge));
+};
+
+export const getKnowledgeSlugs = async () => {
   const { items } = await getRecords("knowledges", { schema: zKnowledgeSlug });
   return items;
 };
 
-export const getKnowledgeUrls = async (helpers: Helpers) => {
-  const knowledges = await getKnowledgeSlugs(helpers);
+export const getKnowledgeUrls = async () => {
+  const knowledges = await getKnowledgeSlugs();
   return knowledges.map(hrefFromKnowledge);
 };
 
 // PAGE ************************************************************************************************************************************
-export const getPage = async (slug: string, { getRecord }: Helpers) => {
+export const getPage = async (slug: string) => {
+  "use cache";
+  cacheTag(`page-${slug}`);
+
   const zPage = select(zPagesRecord, [], {
     post: select(zPostsRecord, ["excerpt", "slug", "title"], {
       image: zImage,
@@ -108,6 +135,15 @@ export const getPostSingle = async (slug: string, { getRecord }: Helpers) => {
 };
 export type Post = Awaited<ReturnType<typeof getPostSingle>>;
 
+export const getPostEntries = async () => {
+  "use cache";
+  cacheTag("posts");
+
+  const zPost = select(zPostsRecord, ["slug"], { knowledge: zKnowledgeSlug });
+  const { items: posts } = await getRecords("posts", { schema: zPost });
+  return posts.map((post) => entryFromPost(post));
+};
+
 export const getPostUrls = async ({ getRecords }: Helpers) => {
   const zPost = select(zPostsRecord, ["slug"], { knowledge: zKnowledgeSlug });
   const { items } = await getRecords("posts", { schema: zPost });
@@ -115,7 +151,10 @@ export const getPostUrls = async ({ getRecords }: Helpers) => {
 };
 
 // PRODUCT *********************************************************************************************************************************
-export const getProducts = async ({ getRecords }: Helpers) => {
+export const getProducts = async () => {
+  "use cache";
+  cacheTag("products");
+
   const zProduct = select(zProductsRecord, ["excerpt", "name", "price", "slug", "url"], { image: zImage });
   const { items } = await getRecords("products", { schema: zProduct });
   return Promise.all(items.map(itemFromProduct));
@@ -132,6 +171,15 @@ export const getServiceSingle = async (slug: string, { getRecord }: Helpers) => 
 };
 export type Service = Awaited<ReturnType<typeof getServiceSingle>>;
 
+export const getServiceEntries = async () => {
+  "use cache";
+  cacheTag("services");
+
+  const zService = select(zServicesRecord, ["category", "slug"], { knowledge: zKnowledgeSlug });
+  const { items: services } = await getRecords("services", { schema: zService });
+  return services.map((service) => entryFromService(service));
+};
+
 export const getServiceUrls = async ({ getRecords }: Helpers) => {
   const zService = select(zServicesRecord, ["category", "slug"], { knowledge: zKnowledgeSlug });
   const { items } = await getRecords("services", { schema: zService });
@@ -139,7 +187,10 @@ export const getServiceUrls = async ({ getRecords }: Helpers) => {
 };
 
 // TESTIMONY *******************************************************************************************************************************
-export const getTestimonies = async ({ getRecords }: Helpers) => {
+export const getTestimonies = async () => {
+  "use cache";
+  cacheTag("testimonies");
+
   const zTestimony = select(zTestimoniesRecord, ["author", "text", "title"]);
   const { items } = await getRecords("testimonies", { schema: zTestimony });
   return items;
@@ -159,11 +210,7 @@ export function otherKnowledgesFrom(knowledges: KnowledgeItem[], knowledgeSlug: 
 
 // URLS ************************************************************************************************************************************
 export const getAllUrls = async (helpers: Helpers) => {
-  const [knowledgeUrls, postUrls, serviceUrls] = await Promise.all([
-    getKnowledgeUrls(helpers),
-    getPostUrls(helpers),
-    getServiceUrls(helpers),
-  ]);
+  const [knowledgeUrls, postUrls, serviceUrls] = await Promise.all([getKnowledgeUrls(), getPostUrls(helpers), getServiceUrls(helpers)]);
   return [...knowledgeUrls, ...postUrls, ...serviceUrls, "/boutique"];
 };
 

@@ -1,14 +1,13 @@
 import { Section, type SectionProps } from "@/components/ui/section";
 import { Title } from "@/components/ui/title";
 import { getTestimonies } from "@/lib/pocketbase";
-import { helpers } from "@/lib/pocketbase/sdk";
 import type { Image as ImageData } from "@/lib/pocketbase/utils";
 import { Image } from "@unpic/react";
 import { TheTestimoniesCarousel } from "./the-testimonies.carousel";
 
 // PROPS ***********************************************************************************************************************************
 export async function TheTestimonies({ image, ...rest }: TheTestimoniesProps) {
-  const items = await getTestimonies(helpers);
+  const items = await getTestimonies();
 
   return (
     <Section className="relative" {...rest} header={<Title text="Témoignages" className="z-10" />}>

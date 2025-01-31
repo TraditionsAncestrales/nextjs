@@ -4,6 +4,7 @@ import "@/styles/theme.css";
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import localFont from "next/font/local";
+import { Suspense } from "react";
 import { TheFooter } from "./_/the-footer";
 import { TheHeader } from "./_/the-header";
 
@@ -27,24 +28,39 @@ export const metadata: Metadata = {
 };
 
 // MAIN ************************************************************************************************************************************
-export default async function Layout({ children, params }: LayoutProps) {
-  const { knowledge } = await params;
+export default function Layout({ children, params }: LayoutProps) {
   return (
     <html lang="fr">
-      <body
-        className={cn("group overflow-y-auto overflow-x-hidden antialiased", [candara.variable, raleway.variable])}
-        data-theme={knowledge}
-      >
-        <TheHeader className="fixed left-0 top-0 z-30 w-full" />
-        {children}
-        <TheFooter />
-      </body>
+      <Suspense>
+        <Body params={params}>
+          <TheHeader className="fixed left-0 top-0 z-30 w-full" />
+          {children}
+          <TheFooter />
+        </Body>
+      </Suspense>
     </html>
+  );
+}
+
+async function Body({ children, params }: BodyProps) {
+  const { knowledge } = await params;
+  return (
+    <body
+      className={cn("group overflow-y-auto overflow-x-hidden antialiased", [candara.variable, raleway.variable])}
+      data-theme={knowledge}
+    >
+      {children}
+    </body>
   );
 }
 
 // TYPES ***********************************************************************************************************************************
 export type LayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{ knowledge: string }>;
+};
+
+export type BodyProps = {
   children: React.ReactNode;
   params: Promise<{ knowledge: string }>;
 };

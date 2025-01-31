@@ -1,6 +1,5 @@
 import { RecordsItems } from "@/components/records-items";
 import { getProducts } from "@/lib/pocketbase";
-import { helpers } from "@/lib/pocketbase/sdk";
 
 // STATIC **********************************************************************************************************************************
 export async function generateStaticParams() {
@@ -9,7 +8,7 @@ export async function generateStaticParams() {
 
 // MAIN ************************************************************************************************************************************
 export default async function ShopPage() {
-  const products = await getProducts(helpers);
+  const products = await getProducts();
 
   return (
     <RecordsItems title="Produit" items={products} border="all" intent="light">

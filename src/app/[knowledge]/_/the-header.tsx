@@ -2,10 +2,9 @@
 
 // import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useWindowScroll } from "@uidotdev/usehooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-// import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { tv, type ClassValue } from "tailwind-variants";
 // import ListIcon from "~icons/ph/list.jsx";
 import LogoIcon from "~icons/ta/logo.jsx";
@@ -30,6 +29,7 @@ const NAV_LINK = tv({
 
 // MAIN ************************************************************************************************************************************
 export function TheHeader({ className }: TheHeaderProps) {
+  const [isScrolled, setScrolled] = useState(typeof window !== "undefined" ? window.scrollY > 0 : false);
   const pathname = usePathname();
   const navs = [
     { text: "A propos", href: "/articles/la-fondatrice" },
@@ -43,12 +43,16 @@ export function TheHeader({ className }: TheHeaderProps) {
   const leftNavs = navs.slice(0, Math.ceil(0.5 * navs.length));
   const rightNavs = navs.slice(Math.ceil(0.5 * navs.length));
 
-  const [{ y }] = useWindowScroll();
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", handler, { capture: false, passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
   return (
     <div
       className={cn(`group bg-white p-2 data-scrolled:bg-white data-scrolled:shadow-lg sm:bg-transparent`, className)}
-      data-scrolled={(y ?? 0) > 0}
+      data-scrolled={isScrolled}
     >
       <nav className="container mx-auto flex items-center justify-between sm:justify-center sm:group-data-scrolled:justify-between">
         <Link href="/" aria-label="Retour à l'accueil" className="flex items-center gap-1 group-data-scrolled:flex sm:hidden">

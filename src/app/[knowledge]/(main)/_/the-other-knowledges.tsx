@@ -2,7 +2,6 @@ import { BUTTON } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { Title } from "@/components/ui/title";
 import { getKnowledges } from "@/lib/pocketbase";
-import { helpers } from "@/lib/pocketbase/sdk";
 import { cn } from "@/lib/utils";
 import { Image } from "@unpic/react";
 import Link from "next/link";
@@ -14,7 +13,7 @@ const cAbs = `absolute inset-0 w-full h-full transition-transform duration-500`;
 
 // MAIN ************************************************************************************************************************************
 export async function TheOtherKnowledges({ knowledge }: TheOtherKnowledgesProps) {
-  const knowledges = await getKnowledges(helpers);
+  const knowledges = await getKnowledges();
   const otherKnowledges = knowledges.filter(({ slug }) => slug !== knowledge);
 
   return (

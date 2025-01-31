@@ -1,5 +1,4 @@
 import { getConfig, getKnowledges } from "@/lib/pocketbase";
-import { helpers } from "@/lib/pocketbase/sdk";
 import { cn } from "@/lib/utils";
 import { Image } from "@unpic/react";
 import type { ClassValue } from "tailwind-variants";
@@ -8,9 +7,8 @@ import type { ClassValue } from "tailwind-variants";
 const cMask = `[mask-image:url(/splash_JaAKBlu3Mz.avif)] [mask-size:contain] [mask-position:center] [mask-repeat:no-repeat]`;
 
 // MAIN ************************************************************************************************************************************
-export async function TheHero({ className, params }: HeroProps) {
-  const { knowledge } = await params;
-  const [{ title: subtitle }, knowledges] = await Promise.all([getConfig(helpers), getKnowledges(helpers)]);
+export async function TheHero({ className, knowledge }: HeroProps) {
+  const [{ title: subtitle }, knowledges] = await Promise.all([getConfig(), getKnowledges()]);
   const currentKnowledge = knowledges.find(({ slug }) => slug === knowledge);
   if (!currentKnowledge) throw new Error("Unknown knowledge");
   const { image, title } = currentKnowledge;
@@ -28,4 +26,4 @@ export async function TheHero({ className, params }: HeroProps) {
 }
 
 // TYPES ***********************************************************************************************************************************
-export type HeroProps = { className?: ClassValue; params: Promise<{ knowledge: string }> };
+export type HeroProps = { className?: ClassValue; knowledge: string };
